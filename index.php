@@ -34,6 +34,11 @@ if (isset($_POST['filter'])) {
                   join `entine_types` as et on c.engine_type_id = et.id
                   join `models` as m on c.model_id = m.id
                   where m.name like '%$model%'
+                  and c.created_date >='$after'
+                  and c.created_date <='$before'
+                  and et.id='$engine'
+                  and c.price >= $minPrice
+                  and c.price <= $maxPrice
                   ";
     } else {
 
@@ -44,9 +49,25 @@ if (isset($_POST['filter'])) {
         $country = $_POST['country'];
         $query = "insert into `models` (`name`,`country`) values ('$name','$country')";
         mysql_query($query);
+    }else{
+        if(isset($_POST['addGasoline'])){
+            $name = $_POST['gasoline'];
+            $query = "insert into `gasoline_types` (`name`) values ('$name')";
+            mysql_query($query);
+        }else{
+            if(isset($_POST['addEngine'])){
+                $name = $_POST['engine'];
+                $query = "insert into `entine_types` (`type`)values('$name')";
+                mysql_query($query);
+                $id = mysql_insert_id();
+                foreach ($_POST['gas'] as $key => $value) {
+                    //TODO: тут добавляем топливо для авто
+                }
+            }
+        }
     }
 }
-
+//Получаем все марки
 $modelQuery = "select * from `models`";
 $resultModels = mysql_query($modelQuery, $connect);
 if (!$resultModels) {
@@ -57,6 +78,31 @@ while ($row = mysql_fetch_array($resultModels)) {
     array_push($models, $row);
 }
 mysql_free_result($resultModels);
+
+
+//Получаем типы двигателей
+$engineQuery = "select * from `entine_types`";
+$resultEngines = mysql_query($engineQuery, $connect);
+if (!$resultEngines) {
+    die(mysql_error());
+}
+$engines = array();
+while ($row = mysql_fetch_array($resultEngines)) {
+    array_push($engines, $row);
+}
+mysql_free_result($resultEngines);
+
+//Получаем типы топлива
+$gasolineQuery = "select * from `gasoline_types`";
+$resultGas = mysql_query($gasolineQuery, $connect);
+if (!$resultGas) {
+    die(mysql_error());
+}
+$gasoline = array();
+while ($row = mysql_fetch_array($resultGas)) {
+    array_push($gasoline, $row);
+}
+mysql_free_result($resultGas);
 
 ?>
 <br/>
@@ -125,7 +171,13 @@ mysql_free_result($resultModels);
     <br/>
     <label> Тип двигателя
         <select name='engine_type'>
-
+            <?php
+            foreach ($engines as $engine) {
+                $id = $engine['id'];
+                $value = $engine['name'];
+                echo("<option value='$id'>$value</option> ");
+            }
+            ?>
         </select>
     </label>
     <br/>
@@ -156,6 +208,33 @@ mysql_free_result($resultModels);
             <input name='country' type='text'/>
         </label>
         <input name='addModel' type="submit" value="Добавить"/>
+    </form>
+</div>
+<div>
+    Добавить тип топлива
+    <form action="index.php" method="post">
+        <label> Тип топлива
+            <input name='gasoline' type='text'/>
+        </label>
+        <input name='addGasoline' type="submit" value="Добавить"/>
+    </form>
+</div>
+<div>
+    Добавить тип двигателя
+    <form action="index.php" method="post">
+        <label> Тип двигателя
+            <input name='engine' type='text'/>
+        </label>
+        <label> Топливо
+            <?php
+            foreach($gasoline as $gas){
+                $name=$gas['name'];
+                $id=$gas['id'];
+                echo "<label><input type='checkbox' name='gas[]' value='$id'/>$name</label>";
+            }
+            ?>
+        </label>
+        <input name='addEngine' type="submit" value="Добавить"/>
     </form>
 </div>
 </body>
