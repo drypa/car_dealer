@@ -31,7 +31,7 @@ if (isset($_POST['filter'])) {
     $query = '';
     if ($model && $after && $before && $engine > 0 && $minPrice && $maxPrice) {
         $query = "select c.*,et.gasoline_type,et.type,m.* from `cars` as c
-                  join `entine_types` as et on c.engine_type_id = et.id
+                  join `engines` as et on c.engine_type_id = et.id
                   join `models` as m on c.model_id = m.id
                   where m.name like '%$model%'
                   and c.created_date >='$after'
@@ -57,11 +57,11 @@ if (isset($_POST['filter'])) {
         }else{
             if(isset($_POST['addEngine'])){
                 $name = $_POST['engine'];
-                $query = "insert into `entine_types` (`type`)values('$name')";
+                $query = "insert into `engines` (`type`)values('$name')";
                 mysql_query($query);
                 $id = mysql_insert_id();
                 foreach ($_POST['gas'] as $key => $value) {
-                    $query = "insert into `engine_gasoline` (`engine_type`,`gasoline_type`) values($id,$value)";
+                    $query = "insert into `engine_gasoline` (`engines`,`gasoline_type`) values($id,$value)";
                     mysql_query($query);
                 }
             }
@@ -82,7 +82,7 @@ mysql_free_result($resultModels);
 
 
 //Получаем типы двигателей
-$engineQuery = "select * from `entine_types`";
+$engineQuery = "select * from `engines`";
 $resultEngines = mysql_query($engineQuery, $connect);
 if (!$resultEngines) {
     die(mysql_error());
@@ -166,6 +166,7 @@ mysql_free_result($resultGas);
 
 <div>
     Внести авто в базу
+    <br/>
     <label> Номер двигателя
         <input name='engine_number' type='text'/>
     </label>
@@ -175,7 +176,7 @@ mysql_free_result($resultGas);
             <?php
             foreach ($engines as $engine) {
                 $id = $engine['id'];
-                $value = $engine['name'];
+                $value = $engine['type'];
                 echo("<option value='$id'>$value</option> ");
             }
             ?>
