@@ -61,7 +61,8 @@ if (isset($_POST['filter'])) {
                 mysql_query($query);
                 $id = mysql_insert_id();
                 foreach ($_POST['gas'] as $key => $value) {
-                    //TODO: тут добавляем топливо для авто
+                    $query = "insert into `engine_gasoline` (`engine_type`,`gasoline_type`) values($id,$value)";
+                    mysql_query($query);
                 }
             }
         }
