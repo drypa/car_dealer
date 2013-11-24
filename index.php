@@ -21,6 +21,11 @@ mysql_select_db('cars', $connect);
 mysql_set_charset('utf8');
 
 $list = Array();
+$query = "select c.*,et.type as engine_type,m.name as model,m.country from `cars` as c
+                  join `engines` as et on c.engine_type_id = et.id
+                  join `models` as m on c.model_id = m.id
+
+                  ";
 if (isset($_POST['filter'])) {
     $model = $_POST['modelFilter'];
     $after = $_POST['dateAfterFilter'];
@@ -28,12 +33,9 @@ if (isset($_POST['filter'])) {
     $engine = $_POST['engineFilter'];
     $minPrice = $_POST['minPriceFilter'];
     $maxPrice = $_POST['maxPriceFilter'];
-    $query = '';
+
     if ($model && $after && $before && $engine > -1 && $minPrice && $maxPrice) {
-        $query = "select c.*,et.gasoline_type,et.type,m.* from `cars` as c
-                  join `engines` as et on c.engine_type_id = et.id
-                  join `models` as m on c.model_id = m.id
-                  where m.name like '%$model%'
+        $query .= " where m.name like '%$model%'
                   and c.created_date >='$after'
                   and c.created_date <='$before'
                   and et.id='$engine'
@@ -79,6 +81,18 @@ if (isset($_POST['filter'])) {
         }
     }
 }
+//Получаем список авто
+$resultAuto = mysql_query($query, $connect);
+if (!$resultAuto) {
+    die(mysql_error());
+}
+$auto = array();
+while ($row = mysql_fetch_array($resultAuto)) {
+    array_push($auto, $row);
+}
+mysql_free_result($resultAuto);
+
+
 //Получаем все марки
 $modelQuery = "select * from `models`";
 $resultModels = mysql_query($modelQuery, $connect);
@@ -161,22 +175,32 @@ mysql_free_result($resultGas);
         <th>Модель</th>
         <th>Дата производства</th>
         <th>Тип двигателя</th>
-        <th>Используемое топливо</th>
         <th>Номер двигателя</th>
         <th>Цена</th>
         <th>Купить</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
+
+    <?php
+    foreach($auto as $a){
+        $model = $a['model'];
+        $engineNumber = $a['engine_number'];
+        $created = $a['created_date'];
+        $engineType = $a['engine_type'];
+        $price = $a['price'];
+        echo('<tr>');
+
+        echo("<td>$model</td>");
+        echo("<td>$created</td>");
+        echo("<td>$engineType</td>");
+        echo("<td>$engineNumber</td>");
+        echo("<td>$price руб</td>");
+        echo("<td></td>");
+
+        echo('</tr>');
+    }
+    ?>
     </tbody>
 </table>
 <br/>
