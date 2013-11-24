@@ -29,7 +29,7 @@ if (isset($_POST['filter'])) {
     $minPrice = $_POST['minPriceFilter'];
     $maxPrice = $_POST['maxPriceFilter'];
     $query = '';
-    if ($model && $after && $before && $engine > 0 && $minPrice && $maxPrice) {
+    if ($model && $after && $before && $engine > -1 && $minPrice && $maxPrice) {
         $query = "select c.*,et.gasoline_type,et.type,m.* from `cars` as c
                   join `engines` as et on c.engine_type_id = et.id
                   join `models` as m on c.model_id = m.id
@@ -62,6 +62,17 @@ if (isset($_POST['filter'])) {
                 $id = mysql_insert_id();
                 foreach ($_POST['gas'] as $key => $value) {
                     $query = "insert into `engine_gasoline` (`engines`,`gasoline_type`) values($id,$value)";
+                    mysql_query($query);
+                }
+            }else{
+                if(isset($_POST['addAuto'])){
+                    $number = $_POST['engine_number'];
+                    $engine_type = $_POST['engine_type'];
+                    $model = $_POST['model'];
+                    $price = $_POST['price'];
+                    $created = $_POST['create_date'];
+                    $query = "insert into `cars` (`engine_number`,`engine_type_id`,`model_id`,`price`,`created_date`)
+                              values('$number','$engine_type','$model','$price','$created')";
                     mysql_query($query);
                 }
             }
@@ -109,7 +120,7 @@ mysql_free_result($resultGas);
 <br/>
 
 <div>
-    Фильтр
+    Фильтр <a href="index.php">Обновить</a>
     <form action="index.php" method="post">
         <br/>
         <label> Модель
@@ -123,8 +134,14 @@ mysql_free_result($resultGas);
         <br/>
         <label> Тип двигателя
             <select name='engineFilter'>
-                <option value="0">Не определен</option>
-                <option value="1">1</option>
+                <option value="-1">Не определен</option>
+                <?php
+                foreach ($engines as $engine) {
+                    $id = $engine['id'];
+                    $value = $engine['type'];
+                    echo("<option value='$id'>$value</option> ");
+                }
+                ?>
             </select>
         </label>
         <br/>
@@ -167,6 +184,7 @@ mysql_free_result($resultGas);
 <div>
     Внести авто в базу
     <br/>
+    <form action="index.php" method="post">
     <label> Номер двигателя
         <input name='engine_number' type='text'/>
     </label>
@@ -188,17 +206,23 @@ mysql_free_result($resultGas);
             <?php
             foreach ($models as $model) {
                 $id = $model['id'];
-                $value = $model['name'] . '(' . $model['country'] . ')';
+                $value = $model['name'] . ' (' . $model['country'] . ')';
                 echo("<option value='$id'>$value</option> ");
             }
             ?>
         </select>
     </label>
+        <br/>
+        <label> Дата производства
+            <input name='create_date' type='text'/>
+        </label>
     <br/>
     <label> Цена
         <input name='price' type='text'/>рублей
     </label>
+        <input name='addAuto' type="submit" value="Добавить"/>
     <br/>
+    </form>
 </div>
 <div>
     Добавить марку авто
