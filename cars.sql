@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost:3306
--- Время создания: Ноя 25 2013 г., 09:23
+-- Время создания: Ноя 25 2013 г., 09:34
 -- Версия сервера: 5.5.32
 -- Версия PHP: 5.4.20
 
@@ -47,18 +47,20 @@ CREATE TABLE IF NOT EXISTS `cars` (
   `engine_type_id` int(11) NOT NULL,
   `price` decimal(10,0) NOT NULL,
   `color_id` int(11) NOT NULL,
+  `byer` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`engine_number`),
   KEY `model_id` (`model_id`),
   KEY `engine_type_id` (`engine_type_id`),
-  KEY `color_id` (`color_id`)
+  KEY `color_id` (`color_id`),
+  KEY `byer` (`byer`)
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
 
 --
 -- Дамп данных таблицы `cars`
 --
 
-INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id`, `price`, `color_id`) VALUES
-('TX125036790-19802', 1, '2010-10-20 06:00:00', 1, '780000', 1);
+INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id`, `price`, `color_id`, `byer`) VALUES
+('TX125036790-19802', 1, '2010-10-20 06:00:00', 1, '780000', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -174,9 +176,10 @@ INSERT INTO `models` (`id`, `name`, `country`) VALUES
 -- Ограничения внешнего ключа таблицы `cars`
 --
 ALTER TABLE `cars`
-  ADD CONSTRAINT `cars_ibfk_3` FOREIGN KEY (`color_id`) REFERENCES `colors` (`id`),
+  ADD CONSTRAINT `cars_ibfk_4` FOREIGN KEY (`byer`) REFERENCES `byers` (`driver_license`) ON DELETE SET NULL ON UPDATE SET NULL,
   ADD CONSTRAINT `cars_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`),
-  ADD CONSTRAINT `cars_ibfk_2` FOREIGN KEY (`engine_type_id`) REFERENCES `gasoline_types` (`id`);
+  ADD CONSTRAINT `cars_ibfk_2` FOREIGN KEY (`engine_type_id`) REFERENCES `gasoline_types` (`id`),
+  ADD CONSTRAINT `cars_ibfk_3` FOREIGN KEY (`color_id`) REFERENCES `colors` (`id`);
 
 --
 -- Ограничения внешнего ключа таблицы `engine_gasoline`
