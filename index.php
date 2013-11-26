@@ -34,17 +34,44 @@ if (isset($_POST['filter'])) {
     $minPrice = $_POST['minPriceFilter'];
     $maxPrice = $_POST['maxPriceFilter'];
 
-    if ($model && $after && $before && $engine > -1 && $minPrice && $maxPrice) {
-        $query .= " where m.name like '%$model%'
-                  and c.created_date >='$after'
-                  and c.created_date <='$before'
-                  and et.id='$engine'
-                  and c.price >= $minPrice
-                  and c.price <= $maxPrice
-                  ";
-    } else {
-
+    if ($model || $after || $before || $engine > -1 || $minPrice || $maxPrice) {
+        $query .= " where ";
+        if($model){
+             $query .= "m.name like '%$model%'";
+        }
+        if($after){
+            if($model){
+                $query .= " and ";
+            }
+            $query .= " c.created_date >='$after'";
+        }
+        if($before){
+            $before = date("Y-m-d", strtotime($before));
+            if($model || $after){
+                $query .= " and ";
+            }
+            $query .= " c.created_date <='$before'";
+        }
+        if($engine>-1){
+            if($model || $after || $after){
+                $query .= " and ";
+            }
+            $query .= " et.id='$engine'";
+        }
+        if($minPrice){
+            if($model || $after || $after || $engine>-1){
+                $query .= " and ";
+            }
+            $query .= " c.price >= $minPrice";
+        }
+        if($maxPrice){
+            if($model || $after || $after || $engine>-1 || $minPrice){
+                $query .= " and ";
+            }
+            $query .= " c.price <= $maxPrice";
+        }
     }
+
 } else {
     if (isset($_POST['addModel'])) {
         $name = $_POST['model'];
