@@ -109,6 +109,12 @@ if (isset($_POST['filter'])) {
                         $color = $_POST['color'];
                         $q = "insert into `colors` (`name`) values('$color')";
                         mysql_query($q);
+                    }else{
+                        if(isset($_POST['delColor'])){
+                            $color = $_POST['color'];
+                            $q = "delete from `colors` where `id`=$color";
+                            mysql_query($q);
+                        }
                     }
                 }
             }
@@ -343,13 +349,28 @@ mysql_free_result($resultColors);
         <input name='addEngine' type="submit" value="Добавить"/>
     </form>
 </div>
-<div>
-    Добавить цвет кузова
+<div style="border: 1px solid #000">
+    Цвета кузова
     <form action="index.php" method="post">
         <label> Цвет кузова
             <input name='color' type='text'/>
         </label>
         <input name='addColor' type="submit" value="Добавить"/>
+    </form>
+
+    <form action="index.php" method="post">
+        <label> Цвет кузова
+            <select name='color'>
+                <?php
+                foreach ($colors as $c) {
+                    $id = $c['id'];
+                    $value = $c['name'];
+                    echo("<option value='$id'>$value</option> ");
+                }
+                ?>
+            </select>
+        </label>
+        <input name='delColor' type="submit" value="Удалить"/>
     </form>
 </div>
 </body>
