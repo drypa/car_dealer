@@ -49,22 +49,22 @@ if (isset($_POST['filter'])) {
     if (isset($_POST['addModel'])) {
         $name = $_POST['model'];
         $country = $_POST['country'];
-        $query = "insert into `models` (`name`,`country`) values ('$name','$country')";
-        mysql_query($query);
+        $q = "insert into `models` (`name`,`country`) values ('$name','$country')";
+        mysql_query($q);
     }else{
         if(isset($_POST['addGasoline'])){
             $name = $_POST['gasoline'];
-            $query = "insert into `gasoline_types` (`name`) values ('$name')";
-            mysql_query($query);
+            $q = "insert into `gasoline_types` (`name`) values ('$name')";
+            mysql_query($q);
         }else{
             if(isset($_POST['addEngine'])){
                 $name = $_POST['engine'];
-                $query = "insert into `engines` (`type`)values('$name')";
-                mysql_query($query);
+                $q = "insert into `engines` (`type`)values('$name')";
+                mysql_query($q);
                 $id = mysql_insert_id();
                 foreach ($_POST['gas'] as $key => $value) {
-                    $query = "insert into `engine_gasoline` (`engines`,`gasoline_type`) values($id,$value)";
-                    mysql_query($query);
+                    $q = "insert into `engine_gasoline` (`engines`,`gasoline_type`) values($id,$value)";
+                    mysql_query($q);
                 }
             }else{
                 if(isset($_POST['addAuto'])){
@@ -72,10 +72,17 @@ if (isset($_POST['filter'])) {
                     $engine_type = $_POST['engine_type'];
                     $model = $_POST['model'];
                     $price = $_POST['price'];
+                    $color = $_POST['color'];
                     $created = $_POST['create_date'];
-                    $query = "insert into `cars` (`engine_number`,`engine_type_id`,`model_id`,`price`,`created_date`)
-                              values('$number','$engine_type','$model','$price','$created')";
-                    mysql_query($query);
+                    $q = "insert into `cars` (`engine_number`,`engine_type_id`,`model_id`,`price`,`created_date`,`color_id`)
+                              values('$number',$engine_type,$model,'$price','$created',$color)";
+                    mysql_query($q);
+                }else{
+                    if(isset($_POST['addColor'])){
+                        $color = $_POST['color'];
+                        $q = "insert into `colors` (`name`) values('$color')";
+                        mysql_query($q);
+                    }
                 }
             }
         }
@@ -130,6 +137,18 @@ while ($row = mysql_fetch_array($resultGas)) {
 }
 mysql_free_result($resultGas);
 
+//Получаем цвета
+$colorsQuery = "select * from `colors`";
+$resultColors = mysql_query($colorsQuery, $connect);
+if (!$resultColors) {
+    die(mysql_error());
+}
+$colors = array();
+while ($row = mysql_fetch_array($resultColors)) {
+    array_push($colors, $row);
+}
+mysql_free_result($resultColors);
+
 ?>
 <br/>
 
@@ -177,7 +196,6 @@ mysql_free_result($resultGas);
         <th>Тип двигателя</th>
         <th>Номер двигателя</th>
         <th>Цена</th>
-        <th>Купить</th>
     </tr>
     </thead>
     <tbody>
@@ -196,7 +214,6 @@ mysql_free_result($resultGas);
         echo("<td>$engineType</td>");
         echo("<td>$engineNumber</td>");
         echo("<td>$price руб</td>");
-        echo("<td></td>");
 
         echo('</tr>');
     }
@@ -231,6 +248,18 @@ mysql_free_result($resultGas);
             foreach ($models as $model) {
                 $id = $model['id'];
                 $value = $model['name'] . ' (' . $model['country'] . ')';
+                echo("<option value='$id'>$value</option> ");
+            }
+            ?>
+        </select>
+    </label>
+        <br />
+    <label> Цвет
+        <select name='color'>
+            <?php
+            foreach ($colors as $c) {
+                $id = $c['id'];
+                $value = $c['name'];
                 echo("<option value='$id'>$value</option> ");
             }
             ?>
@@ -285,6 +314,15 @@ mysql_free_result($resultGas);
             ?>
         </label>
         <input name='addEngine' type="submit" value="Добавить"/>
+    </form>
+</div>
+<div>
+    Добавить цвет кузова
+    <form action="index.php" method="post">
+        <label> Цвет кузова
+            <input name='color' type='text'/>
+        </label>
+        <input name='addColor' type="submit" value="Добавить"/>
     </form>
 </div>
 </body>
