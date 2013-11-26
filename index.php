@@ -101,7 +101,7 @@ if (isset($_POST['filter'])) {
                     $model = $_POST['model'];
                     $price = $_POST['price'];
                     $color = $_POST['color'];
-                    $created = $_POST['create_date'];
+                    $created = date("Y-m-d", strtotime($_POST['create_date']));
                     $q = "insert into `cars` (`engine_number`,`engine_type_id`,`model_id`,`price`,`created_date`,`color_id`)
                               values('$number',$engine_type,$model,'$price','$created',$color)";
                     mysql_query($q);
