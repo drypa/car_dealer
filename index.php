@@ -129,6 +129,13 @@ if (isset($_POST['filter'])) {
                                     $q = "INSERT INTO `byers` (`driver_license`, `name`, `surname`, `middlename`)
                                          VALUES ('$driver_license','$name','$surname','$middle_name')";
                                     mysql_query($q);
+                                }else{
+                                    if (isset($_POST['delByer'])) {
+                                        $byer = $_POST['byer'];
+                                        $q = "delete from `byers` where `driver_license`='$byer'";
+                                        mysql_query($q);
+                                    }
+
                                 }
                             }
 
@@ -446,6 +453,24 @@ mysql_free_result($resultByers);
 
         <input name='addByer' type="submit" value="Добавить"/>
     </form>
+    <form action="index.php" method="post">
+        <label> Цвет кузова
+            <select name='byer'>
+                <?php
+                foreach ($byers as $b) {
+                    $id = $b['driver_license'];
+                    $name = $b['name'];
+                    $surname = $b['surname'];
+                    $middlename = $b['middlename'];
+                    $value = "$surname $name $middlename($id)";
+                    echo("<option value='$id'>$value</option> ");
+                }
+                ?>
+            </select>
+        </label>
+        <input name='delByer' type="submit" value="Удалить"/>
+    </form>
+
 </div>
 </body>
 </html>
