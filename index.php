@@ -40,6 +40,7 @@ if (isset($_POST['filter'])) {
             $query .= "m.name like '%$model%'";
         }
         if ($after) {
+            $after = date("Y-m-d", strtotime($after));
             if ($model) {
                 $query .= " and ";
             }
@@ -119,6 +120,16 @@ if (isset($_POST['filter'])) {
                                 $gas = $_POST['gas'];
                                 $q = "delete from `gasoline_types` where `id`=$gas";
                                 mysql_query($q);
+                            } else {
+                                if (isset($_POST['addByer'])) {
+                                    $surname = $_POST['surname'];
+                                    $name = $_POST['name'];
+                                    $middle_name = $_POST['middle_name'];
+                                    $driver_license = $_POST['driver_license'];
+                                    $q = "INSERT INTO `byers` (`driver_license`, `name`, `surname`, `middlename`)
+                                         VALUES ('$driver_license','$name','$surname','$middle_name')";
+                                    mysql_query($q);
+                                }
                             }
 
                         }
@@ -188,6 +199,19 @@ while ($row = mysql_fetch_array($resultColors)) {
     array_push($colors, $row);
 }
 mysql_free_result($resultColors);
+
+//получаем покупателей
+$byersQuery = "select * from `byers`";
+$resultByers = mysql_query($byersQuery, $connect);
+if (!$resultColors) {
+    die(mysql_error());
+}
+$byers = array();
+while ($row = mysql_fetch_array($resultByers)) {
+    array_push($byers, $row);
+}
+mysql_free_result($resultByers);
+
 
 ?>
 <br/>
@@ -262,63 +286,69 @@ mysql_free_result($resultColors);
     </tbody>
 </table>
 <br/>
+<table>
+    <tr>
+        <td>Внести авто в базу</td>
+        <td>Продать авто</td>
+    </tr>
+    <tr>
+        <td>
+            <form action="index.php" method="post">
+                <label> Номер двигателя
+                    <input name='engine_number' type='text'/>
+                </label>
+                <br/>
+                <label> Тип двигателя
+                    <select name='engine_type'>
+                        <?php
+                        foreach ($engines as $engine) {
+                            $id = $engine['id'];
+                            $value = $engine['type'];
+                            echo("<option value='$id'>$value</option> ");
+                        }
+                        ?>
+                    </select>
+                </label>
+                <br/>
+                <label> Модель
+                    <select name='model'>
+                        <?php
+                        foreach ($models as $model) {
+                            $id = $model['id'];
+                            $value = $model['name'] . ' (' . $model['country'] . ')';
+                            echo("<option value='$id'>$value</option> ");
+                        }
+                        ?>
+                    </select>
+                </label>
+                <br/>
+                <label> Цвет
+                    <select name='color'>
+                        <?php
+                        foreach ($colors as $c) {
+                            $id = $c['id'];
+                            $value = $c['name'];
+                            echo("<option value='$id'>$value</option> ");
+                        }
+                        ?>
+                    </select>
+                </label>
+                <br/>
+                <label> Дата производства
+                    <input name='create_date' type='text'/>
+                </label>
+                <br/>
+                <label> Цена
+                    <input name='price' type='text'/>рублей
+                </label>
+                <input name='addAuto' type="submit" value="Добавить"/>
+                <br/>
+            </form>
+        </td>
+        <td></td>
+    </tr>
+</table>
 
-<div>
-    Внести авто в базу
-    <br/>
-
-    <form action="index.php" method="post">
-        <label> Номер двигателя
-            <input name='engine_number' type='text'/>
-        </label>
-        <br/>
-        <label> Тип двигателя
-            <select name='engine_type'>
-                <?php
-                foreach ($engines as $engine) {
-                    $id = $engine['id'];
-                    $value = $engine['type'];
-                    echo("<option value='$id'>$value</option> ");
-                }
-                ?>
-            </select>
-        </label>
-        <br/>
-        <label> Модель
-            <select name='model'>
-                <?php
-                foreach ($models as $model) {
-                    $id = $model['id'];
-                    $value = $model['name'] . ' (' . $model['country'] . ')';
-                    echo("<option value='$id'>$value</option> ");
-                }
-                ?>
-            </select>
-        </label>
-        <br/>
-        <label> Цвет
-            <select name='color'>
-                <?php
-                foreach ($colors as $c) {
-                    $id = $c['id'];
-                    $value = $c['name'];
-                    echo("<option value='$id'>$value</option> ");
-                }
-                ?>
-            </select>
-        </label>
-        <br/>
-        <label> Дата производства
-            <input name='create_date' type='text'/>
-        </label>
-        <br/>
-        <label> Цена
-            <input name='price' type='text'/>рублей
-        </label>
-        <input name='addAuto' type="submit" value="Добавить"/>
-        <br/>
-    </form>
-</div>
 <div>
     Добавить марку авто
     <form action="index.php" method="post">
@@ -394,6 +424,27 @@ mysql_free_result($resultColors);
             </select>
         </label>
         <input name='delColor' type="submit" value="Удалить"/>
+    </form>
+</div>
+<br/>
+
+<div style="border: 1px solid #000">
+    Покупатели
+    <form action="index.php" method="post">
+        <label>Фамилия
+            <input name='surname' type='text'/>
+        </label>
+        <label>Имя
+            <input name='name' type='text'/>
+        </label>
+        <label>Отчество
+            <input name='middle_name' type='text'/>
+        </label>
+        <label>Номер водительского удостоверения
+            <input name='driver_license' type='text'/>
+        </label>
+
+        <input name='addByer' type="submit" value="Добавить"/>
     </form>
 </div>
 </body>
