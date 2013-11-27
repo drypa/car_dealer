@@ -139,6 +139,12 @@ if (isset($_POST['filter'])) {
         $q = "update `cars` set `byer`='$buyer' where `engine_number`='$car'";
         mysql_query($q);
     }
+    if (isset($_POST['returnAuto'])) {
+        $car = $_POST['auto'];
+        $q = "update `cars` set `byer`=NULL where `engine_number`='$car'";
+        mysql_query($q);
+    }
+
 }
 //Получаем список авто
 $resultAuto = mysql_query($query, $connect);
@@ -226,7 +232,7 @@ $allAutoQuery = "select c.*,et.type as engine_type,m.name as model,m.country,
                   join `colors` as col on c.color_id = col.id
                   left join `buyers` as b on b.driver_license = c.byer";
 
-$resultAllAuto= mysql_query($allAutoQuery, $connect);
+$resultAllAuto = mysql_query($allAutoQuery, $connect);
 if (!$resultAllAuto) {
     die(mysql_error());
 }
@@ -235,6 +241,26 @@ while ($row = mysql_fetch_array($resultAllAuto)) {
     array_push($allAuto, $row);
 }
 mysql_free_result($resultAllAuto);
+
+//получаем проданные авто
+$buyedAutoQuery = "select c.*,et.type as engine_type,m.name as model,m.country,
+                  col.name as color
+                  from `cars` as c
+                  join `engines` as et on c.engine_type_id = et.id
+                  join `models` as m on c.model_id = m.id
+                  join `colors` as col on c.color_id = col.id
+                  where c.byer is not null
+                  ";
+
+$resultByedAuto = mysql_query($buyedAutoQuery, $connect);
+if (!$resultByedAuto) {
+    die(mysql_error());
+}
+$buyedAuto = array();
+while ($row = mysql_fetch_array($resultByedAuto)) {
+    array_push($buyedAuto, $row);
+}
+mysql_free_result($resultByedAuto);
 
 ?>
 <br/>
@@ -593,7 +619,7 @@ mysql_free_result($resultAllAuto);
             $sur = $a['buyer_surname'];
             $mid = $a['buyer_middlename'];
             $license = $a['buyer_driver_license'];
-            $fullName = $license ? "$sur $name $mid($license)" : '-';
+            $fullName = $license ? "$sur $name $mid($license)" : 'Ещё не продана';
             echo('<tr>');
 
 
@@ -611,6 +637,28 @@ mysql_free_result($resultAllAuto);
         </tbody>
     </table>
     <br/>
+
+    <div>
+        <form action="index.php" method="post">
+            <label>Вернуть авто
+                <select name='auto'>
+                    <?php
+                    foreach ($buyedAuto as $a) {
+                        $model = $a['model'];
+                        $engineNumber = $a['engine_number'];
+                        $created = $a['created_date'];
+                        $engineType = $a['engine_type'];
+                        $color = $a['color'];
+                        $price = $a['price'];
+                        $value = "$color $model($engineType); выпуска:$created; цена:$price";
+                        echo("<option value='$engineNumber'>$value</option>");
+                    }
+                    ?>
+                </select>
+                <input type="submit" name='returnAuto' value="Вернуть"/>
+            </label>
+        </form>
+    </div>
 </div>
 </body>
 </html>
