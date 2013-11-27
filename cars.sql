@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost:3306
--- Время создания: Ноя 27 2013 г., 08:40
+-- Время создания: Ноя 27 2013 г., 10:18
 -- Версия сервера: 5.5.32
 -- Версия PHP: 5.4.20
 
@@ -19,6 +19,8 @@ SET time_zone = "+00:00";
 --
 -- База данных: `cars`
 --
+CREATE DATABASE IF NOT EXISTS `cars` DEFAULT CHARACTER SET cp1251 COLLATE cp1251_general_ci;
+USE `cars`;
 
 -- --------------------------------------------------------
 
@@ -26,6 +28,7 @@ SET time_zone = "+00:00";
 -- Структура таблицы `buyers`
 --
 
+DROP TABLE IF EXISTS `buyers`;
 CREATE TABLE IF NOT EXISTS `buyers` (
   `driver_license` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -48,6 +51,7 @@ INSERT INTO `buyers` (`driver_license`, `name`, `surname`, `middlename`) VALUES
 -- Структура таблицы `cars`
 --
 
+DROP TABLE IF EXISTS `cars`;
 CREATE TABLE IF NOT EXISTS `cars` (
   `engine_number` varchar(255) NOT NULL,
   `model_id` int(11) NOT NULL,
@@ -69,10 +73,10 @@ CREATE TABLE IF NOT EXISTS `cars` (
 
 INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id`, `price`, `color_id`, `byer`) VALUES
 ('DX9875211554-20789', 1, '2010-05-20', 2, '760000', 1, NULL),
-('TX125036790-19802', 1, '2010-10-20', 1, '780000', 1, NULL),
+('TX125036790-19802', 1, '2010-10-20', 1, '780000', 1, '123456'),
 ('VW234010102003-01', 3, '2015-12-20', 1, '1200000', 14, NULL),
 ('VW234010102004-98', 3, '2005-06-20', 2, '150000', 1, NULL),
-('АВФ-9877416544', 4, '2010-01-01', 3, '50000', 8, NULL);
+('АВФ-9877416544', 4, '2010-01-01', 3, '50000', 8, '365214');
 
 -- --------------------------------------------------------
 
@@ -80,6 +84,7 @@ INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id
 -- Структура таблицы `colors`
 --
 
+DROP TABLE IF EXISTS `colors`;
 CREATE TABLE IF NOT EXISTS `colors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -106,6 +111,7 @@ INSERT INTO `colors` (`id`, `name`) VALUES
 -- Структура таблицы `engines`
 --
 
+DROP TABLE IF EXISTS `engines`;
 CREATE TABLE IF NOT EXISTS `engines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) NOT NULL,
@@ -127,6 +133,7 @@ INSERT INTO `engines` (`id`, `type`) VALUES
 -- Структура таблицы `engine_gasoline`
 --
 
+DROP TABLE IF EXISTS `engine_gasoline`;
 CREATE TABLE IF NOT EXISTS `engine_gasoline` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `engine_type` int(11) NOT NULL,
@@ -151,6 +158,7 @@ INSERT INTO `engine_gasoline` (`id`, `engine_type`, `gasoline_type`) VALUES
 -- Структура таблицы `gasoline_types`
 --
 
+DROP TABLE IF EXISTS `gasoline_types`;
 CREATE TABLE IF NOT EXISTS `gasoline_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -173,6 +181,7 @@ INSERT INTO `gasoline_types` (`id`, `name`) VALUES
 -- Структура таблицы `models`
 --
 
+DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
