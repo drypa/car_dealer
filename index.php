@@ -30,7 +30,7 @@
                   join `engines` as et on c.engine_type_id = et.id
                   join `models` as m on c.model_id = m.id
                   join `colors` as col on c.color_id = col.id
-
+                  where `byer` is null
                   ";
     if (isset($_POST['filter'])) {
         $model = $_POST['modelFilter'];
@@ -40,44 +40,26 @@
         $minPrice = $_POST['minPriceFilter'];
         $maxPrice = $_POST['maxPriceFilter'];
 
-        if ($model || $after || $before || $engine > -1 || $minPrice || $maxPrice) {
-            $query .= " where ";
             if ($model) {
-                $query .= "m.name like '%$model%'";
+                $query .= " and m.name like '%$model%'";
             }
             if ($after) {
                 $after = date("Y-m-d", strtotime($after));
-                if ($model) {
-                    $query .= " and ";
-                }
-                $query .= " c.created_date >='$after'";
+                $query .= " and c.created_date >='$after'";
             }
             if ($before) {
                 $before = date("Y-m-d", strtotime($before));
-                if ($model || $after) {
-                    $query .= " and ";
-                }
-                $query .= " c.created_date <='$before'";
+                $query .= " and c.created_date <='$before'";
             }
             if ($engine > -1) {
-                if ($model || $after || $after) {
-                    $query .= " and ";
-                }
-                $query .= " et.id='$engine'";
+                $query .= " and et.id='$engine'";
             }
             if ($minPrice) {
-                if ($model || $after || $after || $engine > -1) {
-                    $query .= " and ";
-                }
-                $query .= " c.price >= $minPrice";
+                $query .= " and c.price >= $minPrice";
             }
             if ($maxPrice) {
-                if ($model || $after || $after || $engine > -1 || $minPrice) {
-                    $query .= " and ";
-                }
-                $query .= " c.price <= $maxPrice";
+                $query .= " and c.price <= $maxPrice";
             }
-        }
 
     } else {
         if (isset($_POST['addModel'])) {
@@ -157,7 +139,7 @@
             $q="update `cars` set `byer`='$buyer' where `engine_number`='$car'";
             mysql_query($q);
         }
-
+    }
         //Получаем список авто
         $resultAuto = mysql_query($query, $connect);
         if (!$resultAuto) {
@@ -230,7 +212,7 @@
             array_push($buyers, $row);
         }
         mysql_free_result($resultBuyers);
-    }
+
 
         ?>
     <br/>
