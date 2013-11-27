@@ -134,7 +134,13 @@ if (isset($_POST['filter'])) {
                                         $byer = $_POST['byer'];
                                         $q = "delete from `byers` where `driver_license`='$byer'";
                                         mysql_query($q);
-                                    }
+                                    }else{
+										if (isset($_POST['delEngine'])) {
+											$engine = $_POST['engine'];
+											$q = "delete from `engines` where `id`='$engine'";
+											mysql_query($q);
+										}
+									}
 
                                 }
                             }
@@ -391,8 +397,9 @@ mysql_free_result($resultByers);
         <input name='delGasoline' type="submit" value="Удалить"/>
     </form>
 </div>
-<div>
-    Добавить тип двигателя
+<br />
+<div style="border: 1px solid #000">
+    Тип двигателя
     <form action="index.php" method="post">
         <label> Тип двигателя
             <input name='engine' type='text'/>
@@ -408,7 +415,22 @@ mysql_free_result($resultByers);
         </label>
         <input name='addEngine' type="submit" value="Добавить"/>
     </form>
+	    <form action="index.php" method="post">
+        <label> Тип двигателя
+            <select name='engine'>
+				<?php
+					foreach ($engines as $engine) {
+						$id = $engine['id'];
+						$value = $engine['type'];
+						echo("<option value='$id'>$value</option> ");
+					}
+				?>
+            </select>
+        </label>
+        <input name='delEngine' type="submit" value="Удалить"/>
+    </form>
 </div>
+<br />
 <div style="border: 1px solid #000">
     Цвета кузова
     <form action="index.php" method="post">
@@ -454,7 +476,7 @@ mysql_free_result($resultByers);
         <input name='addByer' type="submit" value="Добавить"/>
     </form>
     <form action="index.php" method="post">
-        <label> Цвет кузова
+        <label> Покупатели
             <select name='byer'>
                 <?php
                 foreach ($byers as $b) {
