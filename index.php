@@ -6,6 +6,10 @@
             border-collapse: collapse;
             border: 1px solid #000;
         }
+        .with-border{
+            border: 1px solid #000;
+
+        }
     </style>
 </head>
 
@@ -21,9 +25,10 @@ mysql_select_db('cars', $connect);
 mysql_set_charset('utf8');
 
 $list = Array();
-$query = "select c.*,et.type as engine_type,m.name as model,m.country from `cars` as c
+$query = "select c.*,et.type as engine_type,m.name as model,m.country, col.name as color from `cars` as c
                   join `engines` as et on c.engine_type_id = et.id
                   join `models` as m on c.model_id = m.id
+                  join `colors` as col on c.color_id = col.id
 
                   ";
 if (isset($_POST['filter'])) {
@@ -126,13 +131,13 @@ if (isset($_POST['filter'])) {
                                     $name = $_POST['name'];
                                     $middle_name = $_POST['middle_name'];
                                     $driver_license = $_POST['driver_license'];
-                                    $q = "INSERT INTO `byers` (`driver_license`, `name`, `surname`, `middlename`)
+                                    $q = "INSERT INTO `buyers` (`driver_license`, `name`, `surname`, `middlename`)
                                          VALUES ('$driver_license','$name','$surname','$middle_name')";
                                     mysql_query($q);
                                 }else{
                                     if (isset($_POST['delByer'])) {
                                         $byer = $_POST['byer'];
-                                        $q = "delete from `byers` where `driver_license`='$byer'";
+                                        $q = "delete from `buyers` where `driver_license`='$byer'";
                                         mysql_query($q);
                                     }else{
 										if (isset($_POST['delEngine'])) {
@@ -220,16 +225,16 @@ while ($row = mysql_fetch_array($resultColors)) {
 mysql_free_result($resultColors);
 
 //получаем покупателей
-$byersQuery = "select * from `byers`";
-$resultByers = mysql_query($byersQuery, $connect);
+$buyersQuery = "select * from `buyers`";
+$resultBuyers = mysql_query($buyersQuery, $connect);
 if (!$resultColors) {
     die(mysql_error());
 }
-$byers = array();
-while ($row = mysql_fetch_array($resultByers)) {
-    array_push($byers, $row);
+$buyers = array();
+while ($row = mysql_fetch_array($resultBuyers)) {
+    array_push($buyers, $row);
 }
-mysql_free_result($resultByers);
+mysql_free_result($resultBuyers);
 
 
 ?>
@@ -277,6 +282,7 @@ mysql_free_result($resultByers);
     <tr>
         <th>Модель</th>
         <th>Дата производства</th>
+        <th>Цвет</th>
         <th>Тип двигателя</th>
         <th>Номер двигателя</th>
         <th>Цена</th>
@@ -291,10 +297,12 @@ mysql_free_result($resultByers);
         $created = $a['created_date'];
         $engineType = $a['engine_type'];
         $price = $a['price'];
+        $color = $a['color'];
         echo('<tr>');
 
         echo("<td>$model</td>");
         echo("<td>$created</td>");
+        echo("<td>$color</td>");
         echo("<td>$engineType</td>");
         echo("<td>$engineNumber</td>");
         echo("<td>$price руб</td>");
@@ -364,11 +372,47 @@ mysql_free_result($resultByers);
                 <br/>
             </form>
         </td>
-        <td></td>
+        <td>
+            <form action="index.php" method="post">
+                <label> Выбрать автомобиль для покупки
+                    <select name="auto">
+                        <?php
+                        foreach ($auto as $a) {
+                            $model = $a['model'];
+                            $engineNumber = $a['engine_number'];
+                            $created = $a['created_date'];
+                            $engineType = $a['engine_type'];
+                            $color = $a['color'];
+                            $price = $a['price'];
+                            $value = "$color $model($engineType); выпуска:$created; цена:$price";
+                            echo("<option value='$engineNumber'>$value</option>");
+                        }
+                        ?>
+                    </select>
+                </label>
+                <br />
+                <label>Покупатель
+                    <select name='buyer'>
+                        <?php
+                        foreach ($buyers as $b) {
+                            $id = $b['driver_license'];
+                            $name = $b['name'];
+                            $surname = $b['surname'];
+                            $middlename = $b['middlename'];
+                            $value = "$surname $name $middlename($id)";
+                            echo("<option value='$id'>$value</option> ");
+                        }
+                        ?>
+                    </select>
+                </label>
+                <br />
+                <input type="submit" name='buyCar' value="Продать"/>
+            </form>
+        </td>
     </tr>
 </table>
 <br />
-<div>
+<div class='with-border'>
     Марка авто
     <form action="index.php" method="post">
         <label> Марка
@@ -394,7 +438,8 @@ mysql_free_result($resultByers);
         <input name='delModel' type="submit" value="Удалить"/>
     </form>
 </div>
-<div style="border: 1px solid #000">
+<br />
+<div  class='with-border'>
     Топливо
     <form action="index.php" method="post">
         <label> Тип топлива
@@ -418,7 +463,7 @@ mysql_free_result($resultByers);
     </form>
 </div>
 <br />
-<div style="border: 1px solid #000">
+<div class='with-border'>
     Тип двигателя
     <form action="index.php" method="post">
         <label> Тип двигателя
@@ -451,7 +496,7 @@ mysql_free_result($resultByers);
     </form>
 </div>
 <br />
-<div style="border: 1px solid #000">
+<div class='with-border'>
     Цвета кузова
     <form action="index.php" method="post">
         <label> Цвет кузова
@@ -477,7 +522,7 @@ mysql_free_result($resultByers);
 </div>
 <br/>
 
-<div style="border: 1px solid #000">
+<div class='with-border'>
     Покупатели
     <form action="index.php" method="post">
         <label>Фамилия
@@ -499,7 +544,7 @@ mysql_free_result($resultByers);
         <label> Покупатели
             <select name='byer'>
                 <?php
-                foreach ($byers as $b) {
+                foreach ($buyers as $b) {
                     $id = $b['driver_license'];
                     $name = $b['name'];
                     $surname = $b['surname'];
