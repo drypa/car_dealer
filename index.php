@@ -139,7 +139,13 @@ if (isset($_POST['filter'])) {
 											$engine = $_POST['engine'];
 											$q = "delete from `engines` where `id`='$engine'";
 											mysql_query($q);
-										}
+										}else{
+											if (isset($_POST['delModel'])) {
+													$model = $_POST['model'];
+													$q = "delete from `models` where `id`=$model";
+													mysql_query($q);
+												}
+											}
 									}
 
                                 }
@@ -361,9 +367,9 @@ mysql_free_result($resultByers);
         <td></td>
     </tr>
 </table>
-
+<br />
 <div>
-    Добавить марку авто
+    Марка авто
     <form action="index.php" method="post">
         <label> Марка
             <input name='model' type='text'/>
@@ -372,6 +378,20 @@ mysql_free_result($resultByers);
             <input name='country' type='text'/>
         </label>
         <input name='addModel' type="submit" value="Добавить"/>
+    </form>
+	 <form action="index.php" method="post">
+        <label> Марка
+            <select name='model'>
+                <?php
+					foreach ($models as $model) {
+						$id = $model['id'];
+						$value = $model['name'] . ' (' . $model['country'] . ')';
+						echo("<option value='$id'>$value</option> ");
+					}
+				?>
+            </select>
+        </label>
+        <input name='delModel' type="submit" value="Удалить"/>
     </form>
 </div>
 <div style="border: 1px solid #000">
