@@ -142,6 +142,12 @@ if (isset($_POST['filter'])) {
         $q = "update `engines` set `type` = '$type' where `id`=$id ";
         mysql_query($q);
     }
+    if (isset($_POST['editColor'])) {
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $q = "update `colors` set `name` = '$name' where `id`=$id ";
+        mysql_query($q);
+    }
 
 
 }
@@ -507,7 +513,7 @@ mysql_free_result($resultByedAuto);
 <div class='with-border'>
     Цвета кузова
     <form action="index.php" method="post">
-        <label> Цвет кузова
+        <label>
             <input name='color' type='text'/>
         </label>
         <input name='addColor' type="submit" value="Добавить"/>
@@ -527,7 +533,18 @@ mysql_free_result($resultByedAuto);
         </label>
         <input name='delColor' type="submit" value="Удалить"/>
     </form>
-    <div></div>
+    Редактирование
+    <?php
+        foreach ($colors as $c) {
+            $id = $c['id'];
+            $name = $c['name'];
+            echo("<form action='index.php' method='post'>");
+            echo("<input type='hidden' name='id' value='$id'>");
+            echo("<input type='text' name='name' value='$name'>");
+            echo("<input type='submit' name='editColor' value='Сохранить' /></form>");
+        }
+    ?>
+
 </div>
 <br/>
 
