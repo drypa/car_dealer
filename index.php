@@ -68,20 +68,10 @@ if (isset($_POST['filter'])) {
         $q = "insert into `models` (`name`,`country`) values ('$name','$country')";
         mysql_query($q);
     }
-    if (isset($_POST['addGasoline'])) {
-        $name = $_POST['gasoline'];
-        $q = "insert into `gasoline_types` (`name`) values ('$name')";
-        mysql_query($q);
-    }
     if (isset($_POST['addEngine'])) {
         $name = $_POST['engine'];
         $q = "insert into `engines` (`type`)values('$name')";
         mysql_query($q);
-        $id = mysql_insert_id();
-        foreach ($_POST['gas'] as $key => $value) {
-            $q = "insert into `engine_gasoline` (`engines`,`gasoline_type`) values($id,$value)";
-            mysql_query($q);
-        }
     }
     if (isset($_POST['addAuto'])) {
         $number = $_POST['engine_number'];
@@ -102,11 +92,6 @@ if (isset($_POST['filter'])) {
     if (isset($_POST['delColor'])) {
         $color = $_POST['color'];
         $q = "delete from `colors` where `id`=$color";
-        mysql_query($q);
-    }
-    if (isset($_POST['delGasoline'])) {
-        $gas = $_POST['gas'];
-        $q = "delete from `gasoline_types` where `id`=$gas";
         mysql_query($q);
     }
     if (isset($_POST['addByer'])) {
@@ -182,18 +167,6 @@ while ($row = mysql_fetch_array($resultEngines)) {
     array_push($engines, $row);
 }
 mysql_free_result($resultEngines);
-
-//Получаем типы топлива
-$gasolineQuery = "select * from `gasoline_types`";
-$resultGas = mysql_query($gasolineQuery, $connect);
-if (!$resultGas) {
-    die(mysql_error());
-}
-$gasoline = array();
-while ($row = mysql_fetch_array($resultGas)) {
-    array_push($gasoline, $row);
-}
-mysql_free_result($resultGas);
 
 //Получаем цвета
 $colorsQuery = "select * from `colors`";
@@ -467,44 +440,10 @@ mysql_free_result($resultByedAuto);
 <br/>
 
 <div class='with-border'>
-    Топливо
-    <form action="index.php" method="post">
-        <label> Тип топлива
-            <input name='gasoline' type='text'/>
-        </label>
-        <input name='addGasoline' type="submit" value="Добавить"/>
-    </form>
-    <form action="index.php" method="post">
-        <label> Тип топлива
-            <select name='gas'>
-                <?php
-                foreach ($gasoline as $g) {
-                    $id = $g['id'];
-                    $value = $g['name'];
-                    echo("<option value='$id'>$value</option> ");
-                }
-                ?>
-            </select>
-        </label>
-        <input name='delGasoline' type="submit" value="Удалить"/>
-    </form>
-</div>
-<br/>
-
-<div class='with-border'>
     Тип двигателя
     <form action="index.php" method="post">
         <label> Тип двигателя
             <input name='engine' type='text'/>
-        </label>
-        <label> Топливо
-            <?php
-            foreach ($gasoline as $gas) {
-                $name = $gas['name'];
-                $id = $gas['id'];
-                echo "<label><input type='checkbox' name='gas[]' value='$id'/>$name</label>";
-            }
-            ?>
         </label>
         <input name='addEngine' type="submit" value="Добавить"/>
     </form>
@@ -548,6 +487,7 @@ mysql_free_result($resultByedAuto);
         </label>
         <input name='delColor' type="submit" value="Удалить"/>
     </form>
+    <div></div>
 </div>
 <br/>
 
