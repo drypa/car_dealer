@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost:3306
--- Время создания: Ноя 29 2013 г., 09:02
+-- Время создания: Ноя 29 2013 г., 10:12
 -- Версия сервера: 5.5.32
 -- Версия PHP: 5.4.20
 
@@ -83,7 +83,7 @@ TRUNCATE TABLE `cars`;
 
 INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id`, `price`, `color_id`, `byer`) VALUES
 ('DX9875211554-20789', 1, '2010-05-20', 2, '760000', 1, NULL),
-('TX125036790-19802', 1, '2010-10-20', 1, '780000', 1, '123456'),
+('TX125036790-19802', 1, '2010-10-20', 1, '780000', 1, NULL),
 ('VW234010102003-01', 3, '2015-12-20', 1, '1200000', 14, NULL),
 ('VW234010102004-98', 3, '2005-06-20', 2, '150000', 1, NULL),
 ('АВФ-9877416544', 3, '2010-01-01', 3, '50000', 8, '365214');
@@ -96,9 +96,9 @@ INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id
 
 DROP TABLE IF EXISTS `colors`;
 CREATE TABLE IF NOT EXISTS `colors` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `color_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`color_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=19 ;
 
 --
@@ -110,7 +110,7 @@ TRUNCATE TABLE `colors`;
 -- Дамп данных таблицы `colors`
 --
 
-INSERT INTO `colors` (`id`, `name`) VALUES
+INSERT INTO `colors` (`color_id`, `name`) VALUES
 (1, 'черный'),
 (2, 'белый'),
 (4, 'синий'),
@@ -128,9 +128,9 @@ INSERT INTO `colors` (`id`, `name`) VALUES
 
 DROP TABLE IF EXISTS `engines`;
 CREATE TABLE IF NOT EXISTS `engines` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `engine_id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`engine_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=4 ;
 
 --
@@ -142,7 +142,7 @@ TRUNCATE TABLE `engines`;
 -- Дамп данных таблицы `engines`
 --
 
-INSERT INTO `engines` (`id`, `type`) VALUES
+INSERT INTO `engines` (`engine_id`, `type`) VALUES
 (1, 'TDI'),
 (2, 'Турбодизель'),
 (3, 'карбюраторный');
@@ -155,10 +155,10 @@ INSERT INTO `engines` (`id`, `type`) VALUES
 
 DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `model_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `country` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`model_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=5 ;
 
 --
@@ -170,7 +170,7 @@ TRUNCATE TABLE `models`;
 -- Дамп данных таблицы `models`
 --
 
-INSERT INTO `models` (`id`, `name`, `country`) VALUES
+INSERT INTO `models` (`model_id`, `name`, `country`) VALUES
 (1, 'Subaru Forester', 'Япония'),
 (2, 'Subaru Impreza', 'Япония'),
 (3, 'VolksWagen Golf', 'Германия'),
@@ -184,10 +184,10 @@ INSERT INTO `models` (`id`, `name`, `country`) VALUES
 -- Ограничения внешнего ключа таблицы `cars`
 --
 ALTER TABLE `cars`
-  ADD CONSTRAINT `cars_ibfk_5` FOREIGN KEY (`engine_type_id`) REFERENCES `engines` (`id`),
-  ADD CONSTRAINT `cars_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`),
-  ADD CONSTRAINT `cars_ibfk_3` FOREIGN KEY (`color_id`) REFERENCES `colors` (`id`),
-  ADD CONSTRAINT `cars_ibfk_4` FOREIGN KEY (`byer`) REFERENCES `buyers` (`driver_license`) ON DELETE SET NULL ON UPDATE SET NULL;
+  ADD CONSTRAINT `cars_ibfk_8` FOREIGN KEY (`engine_type_id`) REFERENCES `engines` (`engine_id`),
+  ADD CONSTRAINT `cars_ibfk_4` FOREIGN KEY (`byer`) REFERENCES `buyers` (`driver_license`) ON DELETE SET NULL ON UPDATE SET NULL,
+  ADD CONSTRAINT `cars_ibfk_6` FOREIGN KEY (`color_id`) REFERENCES `colors` (`color_id`),
+  ADD CONSTRAINT `cars_ibfk_7` FOREIGN KEY (`model_id`) REFERENCES `models` (`model_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
