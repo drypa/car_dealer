@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost:3306
--- Время создания: Ноя 27 2013 г., 10:18
+-- Время создания: Ноя 29 2013 г., 09:02
 -- Версия сервера: 5.5.32
 -- Версия PHP: 5.4.20
 
@@ -38,6 +38,11 @@ CREATE TABLE IF NOT EXISTS `buyers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
 
 --
+-- Очистить таблицу перед добавлением данных `buyers`
+--
+
+TRUNCATE TABLE `buyers`;
+--
 -- Дамп данных таблицы `buyers`
 --
 
@@ -68,6 +73,11 @@ CREATE TABLE IF NOT EXISTS `cars` (
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
 
 --
+-- Очистить таблицу перед добавлением данных `cars`
+--
+
+TRUNCATE TABLE `cars`;
+--
 -- Дамп данных таблицы `cars`
 --
 
@@ -76,7 +86,7 @@ INSERT INTO `cars` (`engine_number`, `model_id`, `created_date`, `engine_type_id
 ('TX125036790-19802', 1, '2010-10-20', 1, '780000', 1, '123456'),
 ('VW234010102003-01', 3, '2015-12-20', 1, '1200000', 14, NULL),
 ('VW234010102004-98', 3, '2005-06-20', 2, '150000', 1, NULL),
-('АВФ-9877416544', 4, '2010-01-01', 3, '50000', 8, '365214');
+('АВФ-9877416544', 3, '2010-01-01', 3, '50000', 8, '365214');
 
 -- --------------------------------------------------------
 
@@ -91,6 +101,11 @@ CREATE TABLE IF NOT EXISTS `colors` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=19 ;
 
+--
+-- Очистить таблицу перед добавлением данных `colors`
+--
+
+TRUNCATE TABLE `colors`;
 --
 -- Дамп данных таблицы `colors`
 --
@@ -119,6 +134,11 @@ CREATE TABLE IF NOT EXISTS `engines` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=4 ;
 
 --
+-- Очистить таблицу перед добавлением данных `engines`
+--
+
+TRUNCATE TABLE `engines`;
+--
 -- Дамп данных таблицы `engines`
 --
 
@@ -126,54 +146,6 @@ INSERT INTO `engines` (`id`, `type`) VALUES
 (1, 'TDI'),
 (2, 'Турбодизель'),
 (3, 'карбюраторный');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `engine_gasoline`
---
-
-DROP TABLE IF EXISTS `engine_gasoline`;
-CREATE TABLE IF NOT EXISTS `engine_gasoline` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `engine_type` int(11) NOT NULL,
-  `gasoline_type` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `engine_type` (`engine_type`,`gasoline_type`),
-  KEY `engine_type_2` (`engine_type`),
-  KEY `gasoline_type` (`gasoline_type`)
-) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=3 ;
-
---
--- Дамп данных таблицы `engine_gasoline`
---
-
-INSERT INTO `engine_gasoline` (`id`, `engine_type`, `gasoline_type`) VALUES
-(1, 0, 1),
-(2, 0, 2);
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `gasoline_types`
---
-
-DROP TABLE IF EXISTS `gasoline_types`;
-CREATE TABLE IF NOT EXISTS `gasoline_types` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=5 ;
-
---
--- Дамп данных таблицы `gasoline_types`
---
-
-INSERT INTO `gasoline_types` (`id`, `name`) VALUES
-(1, 'АИ 95'),
-(2, 'АИ 92'),
-(3, 'Диз.топливо'),
-(4, 'АИ 98');
 
 -- --------------------------------------------------------
 
@@ -189,6 +161,11 @@ CREATE TABLE IF NOT EXISTS `models` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=5 ;
 
+--
+-- Очистить таблицу перед добавлением данных `models`
+--
+
+TRUNCATE TABLE `models`;
 --
 -- Дамп данных таблицы `models`
 --
@@ -207,16 +184,10 @@ INSERT INTO `models` (`id`, `name`, `country`) VALUES
 -- Ограничения внешнего ключа таблицы `cars`
 --
 ALTER TABLE `cars`
+  ADD CONSTRAINT `cars_ibfk_5` FOREIGN KEY (`engine_type_id`) REFERENCES `engines` (`id`),
   ADD CONSTRAINT `cars_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`),
-  ADD CONSTRAINT `cars_ibfk_2` FOREIGN KEY (`engine_type_id`) REFERENCES `gasoline_types` (`id`),
   ADD CONSTRAINT `cars_ibfk_3` FOREIGN KEY (`color_id`) REFERENCES `colors` (`id`),
   ADD CONSTRAINT `cars_ibfk_4` FOREIGN KEY (`byer`) REFERENCES `buyers` (`driver_license`) ON DELETE SET NULL ON UPDATE SET NULL;
-
---
--- Ограничения внешнего ключа таблицы `engine_gasoline`
---
-ALTER TABLE `engine_gasoline`
-  ADD CONSTRAINT `engine_gasoline_ibfk_1` FOREIGN KEY (`gasoline_type`) REFERENCES `gasoline_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
