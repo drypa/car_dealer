@@ -129,6 +129,13 @@ if (isset($_POST['filter'])) {
         $q = "update `cars` set `byer`=NULL where `engine_number`='$car'";
         mysql_query($q);
     }
+    if(isset($_POST['editModel'])){
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $country= $_POST['country'];
+        $q = "update `models` set `name` = '$name',`country`='$country' where `id`=$id ";
+        mysql_query($q);
+    }
 
 }
 //Получаем список авто
@@ -436,6 +443,18 @@ mysql_free_result($resultByedAuto);
         </label>
         <input name='delModel' type="submit" value="Удалить"/>
     </form>
+    <?php
+        foreach ($models as $model) {
+            $id = $model['id'];
+            $name = $model['name'];
+            $country= $model['country'];
+            echo("<form action='index.php' method='post'>");
+            echo("<input type='hidden' name='id' value='$id'>");
+            echo("<input type='text' name='name' value='$name'>");
+            echo("<input type='text' name='country' value='$country'>");
+            echo("<input type='submit' name='editModel' value='Сохранить' /></form>");
+        }
+    ?>
 </div>
 <br/>
 
