@@ -27,9 +27,9 @@ mysql_set_charset('utf8');
 
 $list = Array();
 $query = "select c.*,et.type as engine_type,m.name as model,m.country, col.name as color from `cars` as c
-                  join `engines` as et on c.engine_type_id = et.id
-                  join `models` as m on c.model_id = m.id
-                  join `colors` as col on c.color_id = col.id
+                  join `engines` as et on c.engine_type_id = et.engine_id
+                  join `models` as m on c.model_id = m.model_id
+                  join `colors` as col on c.color_id = col.color_id
                   where `byer` is null
                   ";
 if (isset($_POST['filter'])) {
@@ -118,6 +118,13 @@ if (isset($_POST['filter'])) {
         $q = "delete from `models` where `id`=$model";
         mysql_query($q);
     }
+    if (isset($_POST['delAuto'])) {
+        $id = $_POST['auto'];
+        $q = "delete from `cars` where `engine_number`='$id'";
+        mysql_query($q);
+    }
+
+
     if (isset($_POST['buyCar'])) {
         $buyer = $_POST['buyer'];
         $car = $_POST['auto'];
@@ -237,9 +244,9 @@ $allAutoQuery = "select c.*,et.type as engine_type,m.name as model,m.country,
                   b.middlename as buyer_middlename,
                   b.driver_license as buyer_driver_license
                   from `cars` as c
-                  join `engines` as et on c.engine_type_id = et.id
-                  join `models` as m on c.model_id = m.id
-                  join `colors` as col on c.color_id = col.id
+                  join `engines` as et on c.engine_type_id = et.engine_id
+                  join `models` as m on c.model_id = m.model_id
+                  join `colors` as col on c.color_id = col.color_id
                   left join `buyers` as b on b.driver_license = c.byer";
 
 $resultAllAuto = mysql_query($allAutoQuery, $connect);
@@ -256,9 +263,9 @@ mysql_free_result($resultAllAuto);
 $buyedAutoQuery = "select c.*,et.type as engine_type,m.name as model,m.country,
                   col.name as color
                   from `cars` as c
-                  join `engines` as et on c.engine_type_id = et.id
-                  join `models` as m on c.model_id = m.id
-                  join `colors` as col on c.color_id = col.id
+                  join `engines` as et on c.engine_type_id = et.engine_id
+                  join `models` as m on c.model_id = m.model_id
+                  join `colors` as col on c.color_id = col.color_id
                   where c.byer is not null
                   ";
 
@@ -294,7 +301,7 @@ mysql_free_result($resultByedAuto);
                 <option value="-1">Не определен</option>
                 <?php
                 foreach ($engines as $engine) {
-                    $id = $engine['id'];
+                    $id = $engine['engine_id'];
                     $value = $engine['type'];
                     echo("<option value='$id'>$value</option> ");
                 }
@@ -364,7 +371,7 @@ mysql_free_result($resultByedAuto);
                     <select name='engine_type'>
                         <?php
                         foreach ($engines as $engine) {
-                            $id = $engine['id'];
+                            $id = $engine['engine_id'];
                             $value = $engine['type'];
                             echo("<option value='$id'>$value</option> ");
                         }
@@ -376,7 +383,7 @@ mysql_free_result($resultByedAuto);
                     <select name='model'>
                         <?php
                         foreach ($models as $model) {
-                            $id = $model['id'];
+                            $id = $model['model_id'];
                             $value = $model['name'] . ' (' . $model['country'] . ')';
                             echo("<option value='$id'>$value</option> ");
                         }
@@ -388,7 +395,7 @@ mysql_free_result($resultByedAuto);
                     <select name='color'>
                         <?php
                         foreach ($colors as $c) {
-                            $id = $c['id'];
+                            $id = $c['color_id'];
                             $value = $c['name'];
                             echo("<option value='$id'>$value</option> ");
                         }
@@ -464,7 +471,7 @@ mysql_free_result($resultByedAuto);
             <select name='model'>
                 <?php
                 foreach ($models as $model) {
-                    $id = $model['id'];
+                    $id = $model['model_id'];
                     $value = $model['name'] . ' (' . $model['country'] . ')';
                     echo("<option value='$id'>$value</option> ");
                 }
@@ -476,7 +483,7 @@ mysql_free_result($resultByedAuto);
     Редактирование
     <?php
     foreach ($models as $model) {
-        $id = $model['id'];
+        $id = $model['model_id'];
         $name = $model['name'];
         $country = $model['country'];
         echo("<form action='index.php' method='post'>");
@@ -502,7 +509,7 @@ mysql_free_result($resultByedAuto);
             <select name='engine'>
                 <?php
                 foreach ($engines as $engine) {
-                    $id = $engine['id'];
+                    $id = $engine['engine_id'];
                     $value = $engine['type'];
                     echo("<option value='$id'>$value</option> ");
                 }
@@ -514,7 +521,7 @@ mysql_free_result($resultByedAuto);
     Редактирование
     <?php
         foreach ($engines as $engine) {
-            $id = $engine['id'];
+            $id = $engine['engine_id'];
             $value = $engine['type'];
 
             echo("<form action='index.php' method='post'>");
@@ -541,7 +548,7 @@ mysql_free_result($resultByedAuto);
             <select name='color'>
                 <?php
                 foreach ($colors as $c) {
-                    $id = $c['id'];
+                    $id = $c['color_id'];
                     $value = $c['name'];
                     echo("<option value='$id'>$value</option> ");
                 }
@@ -553,7 +560,7 @@ mysql_free_result($resultByedAuto);
     Редактирование
     <?php
         foreach ($colors as $c) {
-            $id = $c['id'];
+            $id = $c['color_id'];
             $name = $c['name'];
             echo("<form action='index.php' method='post'>");
             echo("<input type='hidden' name='id' value='$id'>");
@@ -687,6 +694,26 @@ mysql_free_result($resultByedAuto);
                 <input type="submit" name='returnAuto' value="Вернуть"/>
             </label>
         </form>
+        <form action="index.php" method="post">
+            <label>Вернуть авто
+                <select name='auto'>
+                    <?php
+                    foreach ($allAuto as $a) {
+                        $model = $a['model'];
+                        $engineNumber = $a['engine_number'];
+                        $created = $a['created_date'];
+                        $engineType = $a['engine_type'];
+                        $color = $a['color'];
+                        $price = $a['price'];
+                        $value = "$color $model($engineType); выпуска:$created; цена:$price";
+                        echo("<option value='$engineNumber'>$value</option>");
+                    }
+                    ?>
+                </select>
+                <input type="submit" name='delAuto' value="Удалить"/>
+            </label>
+        </form>
+
     </div>
 </div>
 </body>
