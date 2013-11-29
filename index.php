@@ -148,7 +148,24 @@ if (isset($_POST['filter'])) {
         $q = "update `colors` set `name` = '$name' where `id`=$id ";
         mysql_query($q);
     }
-
+    if (isset($_POST['editColor'])) {
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $q = "update `colors` set `name` = '$name' where `id`=$id ";
+        mysql_query($q);
+    }
+    if (isset($_POST['editBuyer'])) {
+        $id = $_POST['id'];
+        $driver_license = $_POST['driver_license'];
+        $name = $_POST['name'];
+        $surname = $_POST['surname'];
+        $middlename = $_POST['middlename'];
+        $q = "update `buyers` set `name` = '$name',
+                     `driver_license` = '$driver_license',
+                     `middlename`='$middlename',
+                     `surname`='$surname' where `driver_license`='$id' ";
+        mysql_query($q);
+    }
 
 }
 //Получаем список авто
@@ -583,7 +600,22 @@ mysql_free_result($resultByedAuto);
         </label>
         <input name='delByer' type="submit" value="Удалить"/>
     </form>
-
+    Редактирование
+    <?php
+    foreach ($buyers as $b) {
+        $id = $b['driver_license'];
+        $name = $b['name'];
+        $surname = $b['surname'];
+        $middlename = $b['middlename'];
+        echo("<form action='index.php' method='post'>");
+        echo("<input type='text' name='driver_license' value='$id'>");
+        echo("<input type='hidden' name='id' value='$id'>");
+        echo("<input type='text' name='name' value='$name'>");
+        echo("<input type='text' name='surname' value='$surname'>");
+        echo("<input type='text' name='middlename' value='$middlename'>");
+        echo("<input type='submit' name='editBuyer' value='Сохранить' /></form>");
+    }
+    ?>
 </div>
 <br/>
 
