@@ -173,6 +173,23 @@ if (isset($_POST['filter'])) {
                      `surname`='$surname' where `driver_license`='$id' ";
         mysql_query($q);
     }
+    if(isset($_POST['editCar'])){
+        $color = $_POST['color'];
+        $model = $_POST['model'];
+        $created_date = $_POST['created_date'];
+        $engine = $_POST['engine'];
+        $price = $_POST['price'];
+        $engine_number = $_POST['engine_number'];
+        $id = $_POST['id'];
+        $q = "update `cars` set `color_id`= $color,
+              `created_date`='$created_date',
+              `engine_number`='$engine_number',
+                `engine_type_id` = $engine,
+                `model_id` = $model,
+                `price`= $price
+                where `engine_number` = '$id' ";
+        mysql_query($q);
+    }
 
 }
 //Получаем список авто
@@ -237,7 +254,7 @@ while ($row = mysql_fetch_array($resultBuyers)) {
 mysql_free_result($resultBuyers);
 
 //получаем все авто из базы
-$allAutoQuery = "select c.*,et.type as engine_type,m.name as model,m.country,
+$allAutoQuery = "select c.*,et.type as engine_type, et.engine_id , m.name as model,m.country,
                   col.name as color,
                   b.name as buyer_name,
                   b.surname as buyer_surname,
@@ -676,9 +693,10 @@ mysql_free_result($resultByedAuto);
     <div>
         <?php
         foreach ($allAuto as $a) {
-            echo("<div>");
+            echo("<form action='index.php' method='post'>");
             $cuurent_model = $a['model_id'];
             $engineNumber = $a['engine_number'];
+            $engineId = $a['engine_id'];
             $created = $a['created_date'];
             $engineType = $a['engine_type'];
             $price = $a['price'];
@@ -708,7 +726,24 @@ mysql_free_result($resultByedAuto);
             }
             echo("</select>");
             echo("<input type='text' value='$created' name='created_date'>");
-            echo("</div>");
+
+            echo("<select name='engine'>");
+            foreach ($engines as $engine) {
+                $id = $engine['engine_id'];
+                $value = $engine['type'];
+                if ($engineId == $id) {
+                    echo("<option selected value='$id'>$value</option> ");
+                } else {
+                    echo("<option value='$id'>$value</option> ");
+                }
+            }
+            echo("</select>");
+            echo("<input type='text' value='$engineNumber' name='engine_number'>");
+            echo("<input type='text' value='$price' name='price'>");
+
+
+            echo("<input type='hidden' name='id' value='$engineNumber'>");
+            echo("<input type='submit' name='editCar' value='Сохранить' /></form>");
         }
         ?>
 
