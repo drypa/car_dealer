@@ -520,15 +520,15 @@ mysql_free_result($resultByedAuto);
     </form>
     Редактирование
     <?php
-        foreach ($engines as $engine) {
-            $id = $engine['engine_id'];
-            $value = $engine['type'];
+    foreach ($engines as $engine) {
+        $id = $engine['engine_id'];
+        $value = $engine['type'];
 
-            echo("<form action='index.php' method='post'>");
-            echo("<input type='hidden' name='id' value='$id'>");
-            echo("<input type='text' name='type' value='$value'>");
-            echo("<input type='submit' name='editEngine' value='Сохранить' /></form>");
-        }
+        echo("<form action='index.php' method='post'>");
+        echo("<input type='hidden' name='id' value='$id'>");
+        echo("<input type='text' name='type' value='$value'>");
+        echo("<input type='submit' name='editEngine' value='Сохранить' /></form>");
+    }
 
     ?>
 </div>
@@ -559,14 +559,14 @@ mysql_free_result($resultByedAuto);
     </form>
     Редактирование
     <?php
-        foreach ($colors as $c) {
-            $id = $c['color_id'];
-            $name = $c['name'];
-            echo("<form action='index.php' method='post'>");
-            echo("<input type='hidden' name='id' value='$id'>");
-            echo("<input type='text' name='name' value='$name'>");
-            echo("<input type='submit' name='editColor' value='Сохранить' /></form>");
-        }
+    foreach ($colors as $c) {
+        $id = $c['color_id'];
+        $name = $c['name'];
+        echo("<form action='index.php' method='post'>");
+        echo("<input type='hidden' name='id' value='$id'>");
+        echo("<input type='text' name='name' value='$name'>");
+        echo("<input type='submit' name='editColor' value='Сохранить' /></form>");
+    }
     ?>
 
 </div>
@@ -658,7 +658,6 @@ mysql_free_result($resultByedAuto);
             $fullName = $license ? "$sur $name $mid($license)" : 'Ещё не продана';
             echo('<tr>');
 
-
             echo("<td>$model</td>");
             echo("<td>$created</td>");
             echo("<td>$color</td>");
@@ -672,6 +671,48 @@ mysql_free_result($resultByedAuto);
         ?>
         </tbody>
     </table>
+    <br/>
+
+    <div>
+        <?php
+        foreach ($allAuto as $a) {
+            echo("<div>");
+            $cuurent_model = $a['model_id'];
+            $engineNumber = $a['engine_number'];
+            $created = $a['created_date'];
+            $engineType = $a['engine_type'];
+            $price = $a['price'];
+            $color = $a['color_id'];
+            echo("<select name='color'>");
+            foreach ($colors as $c) {
+                $id = $c['color_id'];
+                $value = $c['name'];
+                if ($id == $color) {
+                    echo("<option selected value='$id'>$value</option> ");
+                } else {
+                    echo("<option value='$id'>$value</option> ");
+                }
+            }
+            echo("</select>");
+            echo("<select name='model'>");
+            foreach ($models as $model) {
+                $id = $model['model_id'];
+                $value = $model['name'] . ' (' . $model['country'] . ')';
+                if ($id == $cuurent_model) {
+                    echo("<option selected value='$id'>$value</option> ");
+                } else {
+                    echo("<option value='$id'>$value</option> ");
+                }
+
+
+            }
+            echo("</select>");
+            echo("<input type='text' value='$created' name='created_date'>");
+            echo("</div>");
+        }
+        ?>
+
+    </div>
     <br/>
 
     <div>
